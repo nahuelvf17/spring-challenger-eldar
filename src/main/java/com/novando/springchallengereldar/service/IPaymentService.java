@@ -8,4 +8,5 @@ public interface IPaymentService {
     public Iterable<Payment> findAll();
     public Payment save(Payment payment) throws Exception;
     public void deleteById(Long id) throws Exception;
+    public Iterable<Payment> findByFilter(String user);
 }

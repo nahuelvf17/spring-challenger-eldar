@@ -3,7 +3,7 @@ package com.novando.springchallengereldar.payment;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public interface IPaymentTransaction {
+public interface IPaymentCard {
     public double calculateServiceFee();
     public default double calculateTotalAmount(double amount) {
         double result = amount + ((amount*calculateServiceFee())/100);

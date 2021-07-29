@@ -1,7 +1,7 @@
 package com.novando.springchallengereldar.payment;
 
-public class AmexPaymentTransaction extends PaymentTransaction implements IPaymentTransaction {
-    public AmexPaymentTransaction(int expirationMonth, int expirationYear) {
+public class VisaPaymentCard extends PaymentTransaction implements IPaymentCard {
+    public VisaPaymentCard(int expirationMonth, int expirationYear) {
         super(expirationMonth, expirationYear, coefficient);
     }
 
@@ -10,5 +10,6 @@ public class AmexPaymentTransaction extends PaymentTransaction implements IPayme
         return roundValue((getExpirationMonth()+getExpirationYear())*getCoefficient());
     }
 
-    final static double coefficient =  0.3;
+    final static double coefficient =  0.8;
+
 }

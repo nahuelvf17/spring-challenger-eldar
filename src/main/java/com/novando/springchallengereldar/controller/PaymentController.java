@@ -2,6 +2,7 @@ package com.novando.springchallengereldar.controller;
 
 import com.novando.springchallengereldar.config.BcryptGenerator;
 import com.novando.springchallengereldar.dto.PaymentDto;
+import com.novando.springchallengereldar.dto.PaymentResponseDto;
 import com.novando.springchallengereldar.entity.CardType;
 import com.novando.springchallengereldar.entity.Payment;
 import com.novando.springchallengereldar.entity.User;
@@ -9,6 +10,7 @@ import com.novando.springchallengereldar.service.PaymentServiceImpl;
 import com.novando.springchallengereldar.service.UserServiceImpl;
 import com.novando.springchallengereldar.utils.CommonUtil;
 import com.novando.springchallengereldar.utils.Message;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class PaymentController {
@@ -37,7 +42,15 @@ public class PaymentController {
 
     @GetMapping("/payment")
     public ResponseEntity<?> paymentTransaction() {
-        return ResponseEntity.ok().body(paymentService.findAll());
+        List<Payment> payments = (List<Payment>) paymentService.findAll();
+
+        ModelMapper modelMapper = new ModelMapper();
+        List<PaymentResponseDto> paymentResponseDtoList = payments
+                .stream()
+                .map(payment -> modelMapper.map(payment, PaymentResponseDto.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(paymentResponseDtoList);
     }
     @PostMapping("/payment")
     public ResponseEntity<?> paymentTransaction(@Valid @RequestBody PaymentDto paymentDto, BindingResult result) {
@@ -77,5 +90,19 @@ public class PaymentController {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Message.CONTROLLER_PAYMENT_SAVE_SUCCESS.getLabel());
+    }
+
+    @GetMapping("/payment/filter")
+    public ResponseEntity<?> filter(@RequestParam(value="usuario", required=true) String user){
+
+        List<Payment> payments = (List<Payment>) paymentService.findByFilter(user);
+
+        ModelMapper modelMapper = new ModelMapper();
+        List<PaymentResponseDto> paymentResponseDtoList = payments
+                .stream()
+                .map(payment -> modelMapper.map(payment, PaymentResponseDto.class))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(paymentResponseDtoList);
     }
 }
